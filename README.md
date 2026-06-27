@@ -4,7 +4,8 @@ A clean, open-source dashboard for managing your [Strava Webhook Events API](htt
 
 - 🔐 **Sign in with Strava** (OAuth via [Auth.js](https://authjs.dev))
 - 🧑‍🤝‍🧑 **Multi-tenant, bring-your-own-credentials** — every user manages their own Strava app
-- 🗄️ **No database** — per-user credentials are encrypted (AES-256-GCM) and stored only in an httpOnly session cookie
+- 🧪 **Send test events** — POST a simulated Strava webhook to your callback to test your receiver
+- 🗄️ **No database** — credentials are encrypted (AES-256-GCM) and stored only in an httpOnly cookie
 - ▲ **Deploys to Vercel** in a couple of clicks, or run it with **Docker**
 - 🎨 Strava-inspired UI
 
@@ -21,6 +22,8 @@ This is a **management console**, not a webhook *receiver*. It does not host a c
 > ℹ️ Your Strava app must have its **Authorization Callback Domain** set to the domain where this dashboard runs (`localhost` for local dev, `your-app.vercel.app` in production). Strava allows only one callback domain per app.
 
 > ⚠️ **Creating a subscription requires a live callback.** When you click *Create*, Strava immediately sends a validation `GET` to the callback URL you entered and expects it to echo `hub.challenge`. Creation only succeeds if that URL is already deployed and responding — that's your own app's job. View and delete have no such requirement.
+
+**Test events.** Once a subscription exists, the *Send a test event* panel POSTs a **simulated** Strava webhook payload (you choose object/aspect type, activity id, owner id) to that subscription's callback URL, and shows you how your receiver responded. It only ever sends to the subscription's own callback (which Strava already validated as publicly reachable) — it does not contact Strava. Real activity data isn't read, so no extra OAuth scopes are required.
 
 ---
 

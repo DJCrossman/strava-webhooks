@@ -11,11 +11,12 @@ import {
   SubscriptionPanel,
   type Subscription,
 } from "@/components/subscription-panel";
+import { TestEventPanel } from "@/components/test-event-panel";
 import { CompatibleWithStrava } from "@/components/compatible-with-strava";
 import { Card } from "@/components/ui/card";
 
 interface Props {
-  user: { name?: string | null; image?: string | null };
+  user: { name?: string | null; image?: string | null; athleteId?: string | null };
 }
 
 export function Dashboard({ user }: Props) {
@@ -63,22 +64,29 @@ export function Dashboard({ user }: Props) {
         onSettings={() => setModalOpen(true)}
       />
 
-      <main className="mx-auto w-full max-w-3xl flex-1 px-6 py-10">
+      <main className="mx-auto w-full max-w-3xl flex-1 space-y-6 px-6 py-10">
         {credsLoaded && creds?.configured ? (
-          <SubscriptionPanel
-            subscription={subscription}
-            loading={subLoading}
-            defaultVerifyToken={creds.verifyToken}
-            onRefresh={refreshSubscription}
-            onChanged={(s) => setSubscription(s)}
-          />
+          <>
+            <SubscriptionPanel
+              subscription={subscription}
+              loading={subLoading}
+              defaultVerifyToken={creds.verifyToken}
+              onRefresh={refreshSubscription}
+              onChanged={(s) => setSubscription(s)}
+            />
+
+            <TestEventPanel
+              hasSubscription={Boolean(subscription)}
+              defaultOwnerId={user.athleteId ?? null}
+            />
+          </>
         ) : (
           <Card className="border-dashed p-10 text-center text-sm text-muted-foreground">
             Add your Strava API credentials to get started.
           </Card>
         )}
 
-        <p className="mt-4 flex items-center justify-center gap-1.5 text-center text-xs text-muted-foreground">
+        <p className="flex items-center justify-center gap-1.5 text-center text-xs text-muted-foreground">
           <ShieldCheck className="size-3.5 text-success" />
           Your credentials are encrypted and stored only in your browser — never
           on a server.
@@ -106,7 +114,6 @@ export function Dashboard({ user }: Props) {
           onDisconnected={() => {
             setCreds({ configured: false, clientId: null, verifyToken: null });
             setSubscription(null);
-            // Modal stays open and becomes non-dismissible (creds required).
           }}
         />
       )}

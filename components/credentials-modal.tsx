@@ -103,10 +103,7 @@ export function CredentialsModal({
         if (!next && dismissible) onClose();
       }}
     >
-      <DialogContent
-        showCloseButton={dismissible}
-        className="sm:max-w-lg"
-      >
+      <DialogContent showCloseButton={dismissible} className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>Strava API credentials</DialogTitle>
           <DialogDescription>
@@ -195,11 +192,7 @@ export function CredentialsModal({
                 onClick={disconnect}
                 disabled={disconnecting || saving}
               >
-                {disconnecting ? (
-                  <Loader2 className="animate-spin" />
-                ) : (
-                  <Unplug />
-                )}
+                {disconnecting ? <Loader2 className="animate-spin" /> : <Unplug />}
                 Disconnect
               </Button>
             )}

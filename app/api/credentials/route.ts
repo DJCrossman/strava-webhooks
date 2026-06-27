@@ -9,7 +9,7 @@ import {
 } from "@/lib/creds";
 import { viewSubscription } from "@/lib/strava";
 
-/** Status of the saved managed credentials. Never returns the client secret. */
+/** Status of the saved credentials. Never returns the client secret. */
 export async function GET() {
   const session = await auth();
   if (!session) {
@@ -25,8 +25,8 @@ export async function GET() {
 
 /**
  * Validate credentials against Strava, then store them in the encrypted cookie.
- * This runs BEFORE sign-in (the /signin form posts here), so it does not require
- * a session — it only ever sets the caller's own cookie.
+ * Runs BEFORE sign-in (the /signin form posts here), so it requires no session;
+ * it only ever sets the caller's own cookie.
  */
 export async function POST(request: Request) {
   let body: Partial<ManagedCreds>;
@@ -38,7 +38,6 @@ export async function POST(request: Request) {
 
   const clientId = body.clientId?.trim();
   const clientSecret = body.clientSecret?.trim();
-
   if (!clientId || !clientSecret) {
     return NextResponse.json(
       { error: "clientId and clientSecret are required." },
