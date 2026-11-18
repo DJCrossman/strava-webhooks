@@ -42,16 +42,17 @@ export async function POST(request: Request) {
   )
     ? String(body.aspectType)
     : "create";
-  const objectId = Number(body.objectId);
-  const ownerId = Number(body.ownerId);
+  // Kept as digit strings: Strava IDs can be 64-bit, which a JS number rounds.
+  const objectId = String(body.objectId ?? "").trim();
+  const ownerId = String(body.ownerId ?? "").trim();
 
-  if (!objectId) {
+  if (!/^[1-9]\d*$/.test(objectId)) {
     return NextResponse.json(
       { error: "A numeric object ID (e.g. an activity ID) is required." },
       { status: 400 },
     );
   }
-  if (!ownerId) {
+  if (!/^[1-9]\d*$/.test(ownerId)) {
     return NextResponse.json(
       { error: "A numeric owner ID (your athlete ID) is required." },
       { status: 400 },
@@ -72,11 +73,11 @@ export async function POST(request: Request) {
 
   const payload = {
     object_type: objectType,
-    object_id: objectId,
+    object_id: JSON.rawJSON(objectId),
     aspect_type: aspectType,
     updates:
       aspectType === "update" && body.updates ? body.updates : {},
-    owner_id: ownerId,
+    owner_id: JSON.rawJSON(ownerId),
     subscription_id: current.data.id,
     event_time: Math.floor(Date.now() / 1000),
   };

@@ -29,9 +29,14 @@ export const authConfig = {
             headers: { Authorization: `Bearer ${account.access_token}` },
           });
           if (res.ok) {
-            const athlete = (await res.json()) as { id?: number | string };
-            if (athlete?.id != null) {
-              (token as Record<string, unknown>).athleteId = String(athlete.id);
+            // Prefer id_str: a 64-bit athlete id is rounded as a JS number.
+            const athlete = (await res.json()) as {
+              id?: number;
+              id_str?: string;
+            };
+            const athleteId = athlete?.id_str ?? athlete?.id?.toString();
+            if (athleteId) {
+              (token as Record<string, unknown>).athleteId = athleteId;
             }
           }
         } catch {
